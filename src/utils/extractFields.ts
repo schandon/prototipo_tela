@@ -67,7 +67,13 @@ export async function readFields(pdfFile: File): Promise<PDFData> {
 
         const arrayBuffer = event.target.result as ArrayBuffer;
         const pdfDoc = await PDFDocument.load(arrayBuffer);
-        const form = pdfDoc.getForm();
+        
+        // Create a new PDF with only the first page
+        const newPdfDoc = await PDFDocument.create();
+        const [firstPage] = await newPdfDoc.copyPages(pdfDoc, [0]);
+        newPdfDoc.addPage(firstPage);
+        
+        const form = newPdfDoc.getForm();
 
         const serviced_equipments_matriz: ServicedEquipment[] = [];
         const warehouse_items_matriz: WarehouseItem[] = [];
